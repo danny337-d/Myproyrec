@@ -67,8 +67,8 @@
 			<form action="" method="post">
 				<label for="nombre">Nombre</label>
 				<input type="text" name="nombre" id="nombre" placeholder="Nombre completo">
-				<label for="correo">Correo electrÃ³nico</label>
-				<input type="email" name="correo" id="correo" placeholder="Correo electrÃ³nico">
+				<label for="correo">Correo electronico</label>
+				<input type="email" name="correo" id="correo" placeholder="Correo electronico">
 				<label for="usuario">Usuario</label>
 				<input type="text" name="usuario" id="usuario" placeholder="Usuario">
 				<label for="clave">Clave</label>

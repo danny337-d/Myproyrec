@@ -11,59 +11,33 @@
 	if(!empty($_POST))
 	{
 	       $alert='';
-		if(empty($_POST['nombre']) || empty($_POST['telefono']) || empty($_POST['direccion']))
+		if(empty($_POST['proveedor']) || empty($_POST['contacto']) || empty($_POST['telefono']) || empty($_POST['direccion']))
 		{
 			$alert='<p class="msg_error">Todos los campos son obligatorios.</p>';
 		}else{
 
-			$idCliente = $_POST['id'];
-			$nit  = $_POST['nit'];
-			$nombre  = $_POST['nombre'];
+			$idproveedor = $_POST['id'];
+			$proveedor  = $_POST['proveedor'];
+			$contacto = $_POST['contacto'];
 			$telefono = md5($_POST['telefono']);
 			$direccion  = $_POST['direccion'];
 
-			$result = 0;
+			
 
-			if(is_numeric($nit) and $nit !=0)
-			{
-$query = mysqli_query($conection,"SELECT * FROM cliente
-				  WHERE (nit = '$nit' AND idcliente != $idCliente)
-									");
-								 
-		   										   
-           $result = mysqli_fetch_array($query);
-           $result = count($result);
-
-           }
+				
 
 
-			if($result > 0){
-				$alert='<p class="msg_error">El nit ya existe,Ingrese otro.</p>';
-			}else{
+       $sql_update = mysqli_query($conection,"UPDATE proveedor
+       SET proveedor = '$proveedor', contacto='$contacto',telefono='$telefono',direccion='$direccion'
 
-			if($nit == '')
-				{
-
-				$nit = 0; 
-
-				}	
-
-
-$sql_update = mysqli_query($conection,"UPDATE cliente
-       SET nit = $nit', nombre='$nombre',telefono='$telefono',direccion='$direccion'
-
-                         WHERE idcliente= $idCliente ");
+                         WHERE codproveedor= $idproveedor ");
 	
- 
-	
-
-	if($sql_update){
-	  $alert='<p class="msg_save">Usuario actualizado correctamente.</p>';
+         if($sql_update){
+	  $alert='<p class="msg_save">Proveedor actualizado correctamente.</p>';
 				}else{
-		$alert='<p class="msg_error">Error al actualizar el cliente.</p>';
-				}
-
-			}
+		$alert='<p class="msg_error">Error al actualizar el proveedor.</p>';
+		
+		}
 
 
 		}
@@ -80,7 +54,7 @@ $sql_update = mysqli_query($conection,"UPDATE cliente
 	}
 	$idproveedor = $_REQUEST['id'];
 
-	$sql= mysqli_query($conection,"SELECT * FROM proveedor WHERE codproveedor= $idproveedor ");
+	$sql= mysqli_query($conection,"SELECT * FROM proveedor WHERE codproveedor= $idproveedor and estatus = 1 ");
 	mysqli_close($conection);
 	$result_sql = mysqli_num_rows($sql);
 
@@ -90,9 +64,9 @@ $sql_update = mysqli_query($conection,"UPDATE cliente
 
 		while ($data = mysqli_fetch_array($sql)) {
 			# code...
-			$idproveedor    = $data['codproveedor'];
+			$idproveedor  = $data['codproveedor'];
 			$proveedor    = $data['proveedor'];
-			$contacto       = $data['contacto'];
+			$contacto     = $data['contacto'];
 			$telefono     = $data['telefono'];
 			$direccion    = $data['direccion'];
 			
@@ -122,7 +96,7 @@ $sql_update = mysqli_query($conection,"UPDATE cliente
 			<div class="alert"><?php echo isset($alert) ? $alert : ''; ?></div>
 
          <form action="" method="post">
-   <input type= "hidden" name= "id" value="<?php echo $proveedor; ?>">
+   <input type= "hidden" name= "id" value="<?php echo $idproveedor; ?>">
 				<label for="proveedor">Proveedor</label>
 <input type="text" name="proveedor" id="proveedor" placeholder="Nombre del Proveedor" value="<?php echo $proveedor ?>">
 				<label for="contacto">Contacto</label>

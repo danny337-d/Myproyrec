@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-07-2024 a las 07:11:37
+-- Tiempo de generación: 21-07-2024 a las 08:13:47
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -85,8 +85,16 @@ CREATE TABLE `entradas` (
   `codproducto` int(11) NOT NULL,
   `fecha` datetime NOT NULL DEFAULT current_timestamp(),
   `cantidad` int(11) NOT NULL,
-  `precio` decimal(10,2) NOT NULL
+  `precio` decimal(10,2) NOT NULL,
+  `usuario_id` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `entradas`
+--
+
+INSERT INTO `entradas` (`correlativo`, `codproducto`, `fecha`, `cantidad`, `precio`, `usuario_id`) VALUES
+(1, 1, '2024-07-20 22:10:22', 150, 110.00, 1);
 
 -- --------------------------------------------------------
 
@@ -114,8 +122,29 @@ CREATE TABLE `producto` (
   `proveedor` int(11) DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL,
   `existencia` int(11) DEFAULT NULL,
+  `date_add` datetime NOT NULL DEFAULT current_timestamp(),
+  `usuario_id` int(11) NOT NULL,
+  `estatus` int(11) NOT NULL DEFAULT 1,
   `foto` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `producto`
+--
+
+INSERT INTO `producto` (`codproducto`, `descripcion`, `proveedor`, `precio`, `existencia`, `date_add`, `usuario_id`, `estatus`, `foto`) VALUES
+(1, 'Mouse USB', 11, 110.00, 150, '2024-07-20 22:10:22', 1, 1, 'mouse.jpg');
+
+--
+-- Disparadores `producto`
+--
+DELIMITER $$
+CREATE TRIGGER `entradas_A_I` AFTER INSERT ON `producto` FOR EACH ROW BEGIN 
+      INSERT INTO entradas (codproducto,cantidad,precio,usuario_id)
+      VALUES (new.codproducto,new.existencia,new.precio,new.usuario_id);
+     END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -139,7 +168,7 @@ CREATE TABLE `proveedor` (
 --
 
 INSERT INTO `proveedor` (`codproveedor`, `proveedor`, `contacto`, `telefono`, `direccion`, `date_add`, `usuario_id`, `estatus`) VALUES
-(1, 'BIC', 'Claudia Rosales', 789877889, 'Avenida las Americas', '2024-07-14 23:55:07', 0, 1),
+(1, 'BIC PERE', 'Claudia Rosales', 0, 'Avenida las Americas', '2024-07-14 23:55:07', 0, 1),
 (2, 'CASIO', 'Jorge Herrera', 565656565656, 'Calzada Las Flores', '2024-07-14 23:55:07', 0, 1),
 (3, 'Omega', 'Julio Estrada', 982877489, 'Avenida Elena Zona 4, Guatemala', '2024-07-14 23:55:07', 0, 1),
 (4, 'Dell Compani', 'Roberto Estrada', 2147483647, 'Guatemala, Guatemala', '2024-07-14 23:55:07', 0, 1),
@@ -160,8 +189,9 @@ INSERT INTO `proveedor` (`codproveedor`, `proveedor`, `contacto`, `telefono`, `d
 (19, 'Dali', '', 5678, 'santos Gutier', '2024-07-15 19:17:34', 1, 1),
 (20, 'AMIR', 'Santana Baldia', 1234, 'Calle 20', '2024-07-16 00:09:31', 1, 1),
 (21, 'Gm', 'Santo Rodriguez', 12334, 'Vargas', '2024-07-17 17:09:03', 1, 1),
-(22, 'BV', 'Pilar Medina', 323444, 'Calle 2o', '2024-07-17 17:09:37', 1, 1),
-(23, 'BA', 'Larry Gomez', 577777, 'calle 30', '2024-07-17 17:11:39', 1, 1);
+(22, 'BV', 'Pilar Medina', 323444, 'Calle 2o', '2024-07-17 17:09:37', 1, 0),
+(23, 'BA', 'Larry Gomez', 577777, 'calle 30', '2024-07-17 17:11:39', 1, 0),
+(24, 'Dali', 'Santo Rodriguez', 778888, 'calle', '2024-07-21 02:10:08', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -205,7 +235,7 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`idusuario`, `nombre`, `correo`, `usuario`, `clave`, `rol`, `estatus`) VALUES
 (1, 'Danny', 'dannyrafael9@gmail.com', 'admin', '202cb962ac59075b964b07152d234b70', 1, 1),
-(2, 'Angel perez sanchez', 'angelrafael9@gmail.com', 'f4f068e71e0d87b', '202cb962ac59075b964b07152d234b70', 1, 1),
+(2, 'Angel perez sanchez  S', 'angelrafael9@gmail.com', 'f4f068e71e0d87b', '202cb962ac59075b964b07152d234b70', 1, 1),
 (3, 'Jesus Perez', 'jesusperez@gmail.com', '110d46fcd978c24', '123', 3, 1),
 (4, 'miha ho', 'migye@gmail.com', 'mig', '202cb962ac59075b964b07152d234b70', 2, 1),
 (5, 'jose vasquez', 'josevasuqezl@gmail.com', 'jose p', '202cb962ac59075b964b07152d234b70', 1, 0),
@@ -246,7 +276,8 @@ ALTER TABLE `detalle_temp`
 --
 ALTER TABLE `entradas`
   ADD PRIMARY KEY (`correlativo`),
-  ADD KEY `codproducto` (`codproducto`);
+  ADD KEY `codproducto` (`codproducto`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Indices de la tabla `factura`
@@ -261,7 +292,8 @@ ALTER TABLE `factura`
 --
 ALTER TABLE `producto`
   ADD PRIMARY KEY (`codproducto`),
-  ADD KEY `proveedor` (`proveedor`);
+  ADD KEY `proveedor` (`proveedor`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Indices de la tabla `proveedor`
@@ -311,7 +343,7 @@ ALTER TABLE `detalle_temp`
 -- AUTO_INCREMENT de la tabla `entradas`
 --
 ALTER TABLE `entradas`
-  MODIFY `correlativo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `correlativo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `factura`
@@ -323,13 +355,13 @@ ALTER TABLE `factura`
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `codproducto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `codproducto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
-  MODIFY `codproveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `codproveedor` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `rol`
@@ -384,13 +416,15 @@ ALTER TABLE `factura`
 -- Filtros para la tabla `producto`
 --
 ALTER TABLE `producto`
-  ADD CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`proveedor`) REFERENCES `proveedor` (`codproveedor`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`proveedor`) REFERENCES `proveedor` (`codproveedor`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `producto_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `rol` (`idrol`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`rol`) REFERENCES `rol` (`idrol`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `usuario_ibfk_2` FOREIGN KEY (`idusuario`) REFERENCES `usuario` (`idusuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

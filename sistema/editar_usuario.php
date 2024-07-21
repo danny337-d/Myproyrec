@@ -72,7 +72,7 @@
 									FROM usuario u
 									INNER JOIN rol r
 									on u.rol = r.idrol
-									WHERE idusuario= $iduser ");
+									WHERE idusuario= $iduser and estatus = 1 ");
 	mysqli_close($conection);
 	$result_sql = mysqli_num_rows($sql);
 
@@ -123,8 +123,8 @@
 				<input type="hidden" name="idUsuario" value="<?php echo $iduser; ?>">
 				<label for="nombre">Nombre</label>
 				<input type="text" name="nombre" id="nombre" placeholder="Nombre completo" value="<?php echo $nombre; ?>">
-				<label for="correo">Correo electrÃ³nico</label>
-				<input type="email" name="correo" id="correo" placeholder="Correo electrÃ³nico" value="<?php echo $correo; ?>">
+				<label for="correo">Correo electronico</label>
+				<input type="email" name="correo" id="correo" placeholder="Correo electronico" value="<?php echo $correo; ?>">
 				<label for="usuario">Usuario</label>
 				<input type="text" name="usuario" id="usuario" placeholder="Usuario" value="<?php echo $usuario; ?>">
 				<label for="clave">Clave</label>

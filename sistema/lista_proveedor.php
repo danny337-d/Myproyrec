@@ -67,7 +67,7 @@ include "../conexion.php";
 
 			while ($data = mysqli_fetch_array($query)) {
 			$formato = 'Y-m-d H:i:s';
-			$fecha   = DateTime::createFromFormat($formato,$data["date_add"])
+			$fecha   = DateTime::createFromFormat($formato,$data["date_add"]);
              ?> 
 			<tr>
 					<td><?php echo $data["codproveedor"]; ?></td>
@@ -80,12 +80,9 @@ include "../conexion.php";
  <td>
 <a class="link_edit" href="editar_proveedor.php?id=<?php echo $data["codproveedor"]; ?>">Editar</a>
 
-		
+|
 
-
-					
-
-					<a class="link_delete" href="eliminar_confirmar_proveedor.php?id=<?php echo $data["codproveedor"]; ?>">Eliminar</a>
+<a class="link_delete" href="eliminar_confirmar_proveedor.php?id=<?php echo $data["codproveedor"]; ?>">Eliminar</a>
 
 				
 						
